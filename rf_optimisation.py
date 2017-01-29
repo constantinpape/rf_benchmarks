@@ -19,17 +19,18 @@ rf2 = vigra.learning.RandomForest
 
 # we keep n_trees fixed
 n_trees = 100
+min_size_node = 2
 
 # do a grid search over min_split_node and max_depth
-min_split_node_vals = [2,5,10]
-max_depth_vals      = [4,6,8,12,16,-1]
+min_size_leaf_vals = [0,2,5,10,15,20]
+max_depth_vals     = [8,10,12,15,-1]
 
 
-def learn_rf(min_nodes, max_depth, n_threads=2):
+def learn_rf(max_depth, min_size_leaf, n_threads=2):
 
-    def learn_sub_rf(Xtr, Ytr, max_depth, min_nodes, n_sub):
-        rf = rf2(treeCount = n_sub, min_split_node_size = min_nodes)
-        rf.learnRF(Xtr, Ytr, maxDepth = max_depth)
+    def learn_sub_rf(Xtr, Ytr, max_depth, min_size_leaf, n_sub):
+        rf = rf2(treeCount = n_sub, min_split_node_size = min_size_node)
+        rf.learnRF(Xtr, Ytr, maxDepth = max_depth, minSize = min_size_leaf)
         return rf
 
     subtrees  = n_threads * [n_trees / n_threads]
@@ -45,7 +46,7 @@ def learn_rf(min_nodes, max_depth, n_threads=2):
                 X_train,
                 Y_train,
                 max_depth,
-                min_nodes,
+                min_size_leaf,
                 subtrees[t]) )
         rfs = [tt.result() for tt in tasks]
     return rfs
@@ -87,9 +88,9 @@ def grid_search(N, n_threads, save=False):
 
     res_dict = {}
     for max_depth in max_depth_vals:
-        for min_node in min_split_node_vals:
+        for min_leaf_size in min_size_leaf_vals:
 
-            print "Eval for: ", max_depth, min_node
+            print "Eval for: ", max_depth, min_leaf_size
 
             t_train = []
             t_test  = []
@@ -97,11 +98,11 @@ def grid_search(N, n_threads, save=False):
 
             for _ in xrange(N):
                 t0 = time.time()
-                rfs = learn_rf(min_node, max_depth, n_threads)
+                rfs = learn_rf(max_depth, min_leaf_size, n_threads)
                 t_train.append(time.time() - t0)
                 t1 = time.time()
                 probs  = predict_rf(rfs, n_threads, save,
-                        "prediction_depth%i_split%i.h5" % (max_depth,min_node))
+                        "prediction_depth%i_split%i.h5" % (max_depth,min_leaf_size))
                 t_test.append(time.time() - t1)
                 acc.append(eval_pmap(probs, reference_pmap))
 
@@ -112,7 +113,7 @@ def grid_search(N, n_threads, save=False):
             print "Train Time:", t_train_m, "+-", t_train_std ,"s"
             print "Prediction Time", t_test_m, "+-", t_test_std ,"s"
             print "Accuracy", acc_m, "+-", acc_std, "s"
-            res_dict[(max_depth, min_node)] = (t_train_m, t_train_std, t_test_m, t_test_std, acc_m,acc_std)
+            res_dict[(max_depth, min_leaf_size)] = (t_train_m, t_train_std, t_test_m, t_test_std, acc_m,acc_std)
 
     if not save:
         if not os.path.exists('./results'):
@@ -125,4 +126,4 @@ if __name__ == '__main__':
     # for eval and validation
     #rfs = learn_rf(1, -1, 4)
     #pmap = predict_rf(rfs, 4, True)
-    grid_search(15, 1)
+    grid_search(15, 4)
