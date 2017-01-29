@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 import time
 from concurrent import futures
-sys.path.append('/home/consti/Work/projects_phd/ilastik-hackathon/inst/lib/python2.7/dist-packages')
+sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
 X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
@@ -19,7 +19,7 @@ rf2 = vigra.learning.RandomForest
 rf3 = vigra.learning.RandomForest3
 
 # number of repetitions
-N = 1
+N = 10
 # parameter, for the rest the defaults should agree
 n_trees = 100
 min_split_node = 2
@@ -92,7 +92,8 @@ def predict_sk(n_threads=1):
 
 def compare_predict_rfs():
     res_dict = {}
-    threads = (1,2,4,6,8)
+    #threads = (1,2,4,6,8)
+    threads = (1,2,4,6,8,10,20,30,40)
     print "Start prediction benchmarks"
     # vi2
     res_dict["vi2"] = {}
@@ -108,11 +109,11 @@ def compare_predict_rfs():
         print "Predicting vigra rf3 with %i threads in %f +- %f s" % (n_threads, t_vi3, std_vi3)
     # TODO FIXME This is insanely RAM-hungry, write sklearn issue!
     # sk
-    #res_dict["sk"] = {}
-    #for n_threads in threads:
-    #    t_sk, std_sk = predict_sk(n_threads)
-    #    res_dict["sk"][n_threads] = (t_sk, std_sk)
-    #    print "Predicting sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
+    res_dict["sk"] = {}
+    for n_threads in threads:
+        t_sk, std_sk = predict_sk(n_threads)
+        res_dict["sk"][n_threads] = (t_sk, std_sk)
+        print "Predicting sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
 
     if not os.path.exists('./results'):
         os.mkdir('./results')
