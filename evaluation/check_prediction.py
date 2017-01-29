@@ -39,6 +39,5 @@ def check_mulit_predictions(*args):
 
 if __name__ == '__main__':
     check_mulit_predictions('../results/prediction.h5',
-            '../results/prediction_1_-1.h5',
-            '../results/prediction_1_4.h5',
-            '../results/prediction_1_6.h5')
+            '../results/prediction_depth10_split0.h5',
+            '../results/prediction_depth-1_split0.h5')

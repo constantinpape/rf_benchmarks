@@ -53,12 +53,13 @@ Benchmarking the prediction for a 200^3 cutout.
 
 ## Sklearn RAM Issues
 
-The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
+The Sklearn RF needs insane amounts of RAM during prediction. For the feature matrix used here (~ 500 MB), it eats up all the 
 RAM of my laptop (16 GB). Hence I have profiled the maximal RAM consumption. Apparently it copies the input for every tree during prediction (see table).
 The number of threads does not affect the RAM usage.
-See github issue: TODO
 
-| Num Threads / | 1   | 2   | 4   | 8   | 10  | 20  | 
+See also github issue: TODO
+
+| Num Threads   | 1   | 2   | 4   | 8   | 10  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
 | Num Trees     |     |     |     |     |     |     | 
 | 5             | 1.94 GB | 1.94 GB | 1.94 GB | 2.19 GB | 2.19 GB | 2.19 GB |
@@ -70,7 +71,7 @@ See github issue: TODO
 
 ## Gridsearch
 
-| MinLeafSize / | 1   | 2   | 5   | 10  | 15  | 20  | 
+| MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
 | MaxDepth      |     |     |     |     |     |     | 
 | 8             | 15.839 +- 0.271 s | 15.640 +- 0.241 s | 15.687 +- 0.233 s | 15.644 +- 0.255 s | 15.689 +- 0.247 s | 15.608 +- 0.274 s |
@@ -80,7 +81,7 @@ See github issue: TODO
 | None          | **21.740 +- 0.455 s** | 21.588 +- 0.258 s | 21.415 +- 0.306 s | 20.953 +- 0.177 s | 20.818 +- 0.387 s | 20.442 +- 0.444 s |
 
 
-| MinLeafSize / | 1   | 2   | 5   | 10  | 15  | 20  | 
+| MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
 | MaxDepth      |     |     |     |     |     |     | 
 | 8             | 0.954 +- 0.002 | 0.954 +- 0.003 | 0.955 +- 0.003 | 0.954 +- 0.002 | 0.955 +- 0.002 | 0.954 +- 0.002 |
@@ -96,9 +97,9 @@ See github issue: TODO
 
 ##TODO
 
-* Compare to more implementations / algourithms
-** XGB
-** GPU RandomForest
+Compare to more implementations / algourithms
+* XGB
+* GPU RandomForest
 
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
