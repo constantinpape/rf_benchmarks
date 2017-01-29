@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 import time
 from concurrent import futures
-sys.path.append('/home/consti/Work/projects_phd/ilastik-hackathon/inst/lib/python2.7/dist-packages')
+sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
 X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
@@ -17,14 +17,12 @@ X = X.reshape((shape[0]*shape[1]*shape[2],shape[3]))
 
 rf2 = vigra.learning.RandomForest
 
-# number of repetitions
-N = 1
 # we keep n_trees fixed
 n_trees = 100
 
 # do a grid search over min_split_node and max_depth
-min_split_node_vals = [1,2,5,10]
-max_depth_vals      = [-1,4,6,8,12]
+min_split_node_vals = [2,5,10]
+max_depth_vals      = [4,6,8,12,16,-1]
 
 
 def learn_rf(min_nodes, max_depth, n_threads=2):
@@ -79,29 +77,44 @@ def eval_pmap(probs, reference_pmap):
     return np.sum(max_validation == max_reference) / float(max_reference.shape[0])
 
 
-def grid_search(plot=False):
+def grid_search(N, n_threads, save=False):
+
+    if save:
+        assert N == 1
 
     reference_pmap = vigra.readHDF5('./results/prediction.h5', 'data')
     reference_pmap = reference_pmap.reshape((shape[0]*shape[1]*shape[2],4))
 
     res_dict = {}
-    for min_node in min_split_node_vals:
-        for max_depth in max_depth_vals:
-            print "Eval for: ", min_node, max_depth
-            t_train = time.time()
-            rfs = learn_rf(min_node, max_depth, 4)
-            t_train = time.time() - t_train
-            t_test = time.time()
-            probs  = predict_rf(rfs, 4, plot, "prediction_%i_%i.h5" % (min_node,max_depth))
-            t_test = time.time() - t_test
-            acc = eval_pmap(probs, reference_pmap)
-            res_dict[(min_node, max_depth)] = (t_train, t_test, acc)
+    for max_depth in max_depth_vals:
+        for min_node in min_split_node_vals:
 
-            print "Train Time:", t_train, "s"
-            print "Prediction Time", t_test, "s"
-            print "Accuracy", acc
+            print "Eval for: ", max_depth, min_node
 
-    if not plot:
+            t_train = []
+            t_test  = []
+            acc     = []
+
+            for _ in xrange(N):
+                t0 = time.time()
+                rfs = learn_rf(min_node, max_depth, n_threads)
+                t_train.append(time.time() - t0)
+                t1 = time.time()
+                probs  = predict_rf(rfs, n_threads, save,
+                        "prediction_depth%i_split%i.h5" % (max_depth,min_node))
+                t_test.append(time.time() - t1)
+                acc.append(eval_pmap(probs, reference_pmap))
+
+            t_train_m, t_train_std = np.mean(t_train), np.std(t_train)
+            t_test_m, t_test_std = np.mean(t_test), np.std(t_test)
+            acc_m, acc_std = np.mean(acc), np.std(acc)
+
+            print "Train Time:", t_train_m, "+-", t_train_std ,"s"
+            print "Prediction Time", t_test_m, "+-", t_test_std ,"s"
+            print "Accuracy", acc_m, "+-", acc_std, "s"
+            res_dict[(max_depth, min_node)] = (t_train_m, t_train_std, t_test_m, t_test_std, acc_m,acc_std)
+
+    if not save:
         if not os.path.exists('./results'):
             os.mkdir('./results')
         with open('./results/benchmarks_gridsearch.pkl', 'w') as f:
@@ -112,4 +125,4 @@ if __name__ == '__main__':
     # for eval and validation
     #rfs = learn_rf(1, -1, 4)
     #pmap = predict_rf(rfs, 4, True)
-    grid_search(True)
+    grid_search(15, 1)
