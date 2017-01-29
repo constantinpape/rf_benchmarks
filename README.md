@@ -15,7 +15,7 @@ TODOs:
 * Use results from grid search in pipeline
 
 Note:
-* The Vigra RF2 is not inherently parallelised, so I have used concurrent.futures to parallelize it from
+* The Vigra RF2 is not internally parallelised, so I have used concurrent.futures to parallelize it from
 python, by training / predicting multiple forests with the corresponding number of sub-trees. (This is also what ilastik does).
 * The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
 RAM of my laptop (16 GB), even in single threaded prediction. See github issue: 

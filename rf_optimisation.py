@@ -53,7 +53,7 @@ def learn_rf(min_nodes, max_depth, n_threads=2):
     return rfs
 
 
-def predict_rf(rfs, n_threads=2, save = False):
+def predict_rf(rfs, n_threads=2, save = False, save_name = "prediction.h5"):
 
     with futures.ThreadPoolExecutor(max_workers = n_threads) as executor:
         tasks = []
@@ -67,19 +67,19 @@ def predict_rf(rfs, n_threads=2, save = False):
             if not os.path.exists('./results'):
                 os.mkdir('./results')
             vigra.writeHDF5(probs.reshape( (shape[0], shape[1], shape[2], 4) ),
-                    './results/prediction.h5', 'data')
+                    './results/' + save_name, 'data')
     return probs
 
 
 def eval_pmap(probs, reference_pmap):
     assert probs.shape == reference_pmap.shape
-    max_validation = np.argmax(probs, axis = 0)
-    max_reference  = np.argmax(reference_pmap, axis = 0)
-    agree = max_validation == max_reference
-    return np.sum(agree) / float(probs.shape[0])
+    assert probs.ndim == 2
+    max_validation = np.argmax(probs, axis = 1)
+    max_reference  = np.argmax(reference_pmap, axis = 1)
+    return np.sum(max_validation == max_reference) / float(max_reference.shape[0])
 
 
-def grid_search():
+def grid_search(plot=False):
 
     reference_pmap = vigra.readHDF5('./results/prediction.h5', 'data')
     reference_pmap = reference_pmap.reshape((shape[0]*shape[1]*shape[2],4))
@@ -92,7 +92,7 @@ def grid_search():
             rfs = learn_rf(min_node, max_depth, 4)
             t_train = time.time() - t_train
             t_test = time.time()
-            probs  = predict_rf(rfs, 4)
+            probs  = predict_rf(rfs, 4, plot, "prediction_%i_%i.h5" % (min_node,max_depth))
             t_test = time.time() - t_test
             acc = eval_pmap(probs, reference_pmap)
             res_dict[(min_node, max_depth)] = (t_train, t_test, acc)
@@ -101,14 +101,15 @@ def grid_search():
             print "Prediction Time", t_test, "s"
             print "Accuracy", acc
 
-    if not os.path.exists('./results'):
-        os.mkdir('./results')
-    with open('./results/benchmarks_gridsearch.pkl', 'w') as f:
-        pickle.dump(res_dict, f)
+    if not plot:
+        if not os.path.exists('./results'):
+            os.mkdir('./results')
+        with open('./results/benchmarks_gridsearch.pkl', 'w') as f:
+            pickle.dump(res_dict, f)
 
 
 if __name__ == '__main__':
     # for eval and validation
     #rfs = learn_rf(1, -1, 4)
     #pmap = predict_rf(rfs, 4, True)
-    grid_search()
+    grid_search(True)
