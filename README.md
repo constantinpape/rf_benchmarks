@@ -61,7 +61,7 @@ See also github issue: TODO
 
 | Num Threads   | 1   | 2   | 4   | 8   | 10  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
-| Num Trees     |     |     |     |     |     |     | 
+| **Num Trees** |     |     |     |     |     |     | 
 | 5             | 1.94 GB | 1.94 GB | 1.94 GB | 2.19 GB | 2.19 GB | 2.19 GB |
 | 10            | 3.16 GB | 3.23 GB | 3.23 GB | 3.23 GB | 3.72 GB | 3.72 GB |
 | 25            | 6.83 GB | 6.84 GB | 6.84 GB | 6.93 GB | 7.08 GB | 6.97 GB |
@@ -78,7 +78,7 @@ Note that this corresponds to the **bold** entry, hence all accuracies around 0.
 
 | MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
-| MaxDepth      |     |     |     |     |     |     | 
+| **MaxDepth**  |     |     |     |     |     |     | 
 | 8             | *15.839 +- 0.271 s* | 15.640 +- 0.241 s | 15.687 +- 0.233 s | 15.644 +- 0.255 s | 15.689 +- 0.247 s | 15.608 +- 0.274 s |
 | 10            | 19.072 +- 0.295 s | 19.045 +- 0.274 s | 18.742 +- 0.223 s | 18.668 +- 0.231 s | 18.634 +- 0.237 s | 18.575 +- 0.261 s |
 | 12            | 20.845 +- 0.706 s | 20.660 +- 0.353 s | 20.535 +- 0.230 s | 20.332 +- 0.236 s | 19.957 +- 0.223 s | 20.034 +- 0.349 s |
@@ -89,7 +89,7 @@ Grid search: prediction time (4 Threads)
 
 | MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
-| MaxDepth      |     |     |     |     |     |     | 
+| **MaxDepth**  |     |     |     |     |     |     | 
 | 8             | *0.954 +- 0.002* | 0.954 +- 0.003 | 0.955 +- 0.003 | 0.954 +- 0.002 | 0.955 +- 0.002 | 0.954 +- 0.002 |
 | 10            | 0.965 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.965 +- 0.001 |
 | 12            | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
@@ -109,12 +109,20 @@ See images below, showing the results of **full** and *reduced* model.
 
 Images: raw data (left) and prediction for background class of **full** (middle) and *reduced* (right) model.
 
+
 ## Pipeline Results
 
-* For Pipeline: Try single block parallelisation -> appears to be faster!
-* Use results from grid search in pipeline
+Runtimes for (300,300,200) cutout.
 
-##TODO
+|           | In-Block-Parallelisation | Over-Blocks-Parallelisation |
+| --------- | -----------------------: | --------------------------: |
+| Full RF   | 159 s                    | 86 s                        |
+| Reduced RF| 154 s                    | 96 s                        |
+
+WIP
+
+
+## TODO
 
 Compare to more implementations / algourithms
 * XGB

@@ -8,10 +8,10 @@ from concurrent import futures
 sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
-X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
-Y_train = vigra.readHDF5('./training_data/annas_labels.h5', 'data')
+X_train = vigra.readHDF5('../training_data/annas_features.h5', 'data')
+Y_train = vigra.readHDF5('../training_data/annas_labels.h5', 'data')
 
-X = vigra.readHDF5('./training_data/features_test.h5', 'data')
+X = vigra.readHDF5('../training_data/features_test.h5', 'data')
 shape = X.shape
 X = X.reshape((shape[0]*shape[1]*shape[2],shape[3]))
 
@@ -115,9 +115,9 @@ def compare_predict_rfs():
         res_dict["sk"][n_threads] = (t_sk, std_sk)
         print "Predicting sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
 
-    if not os.path.exists('./results'):
-        os.mkdir('./results')
-    with open('./results/benchmarks_prediction.pkl', 'w') as f:
+    if not os.path.exists('../results'):
+        os.mkdir('../results')
+    with open('../results/benchmarks_prediction.pkl', 'w') as f:
         pickle.dump(res_dict, f)
 
 if __name__ == '__main__':

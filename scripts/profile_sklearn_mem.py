@@ -4,10 +4,10 @@ from memory_profiler import memory_usage
 import vigra
 import cPickle as pickle
 
-X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
-Y_train = vigra.readHDF5('./training_data/annas_labels.h5', 'data')
+X_train = vigra.readHDF5('../training_data/annas_features.h5', 'data')
+Y_train = vigra.readHDF5('../training_data/annas_labels.h5', 'data')
 
-X = vigra.readHDF5('./training_data/features_test.h5', 'data')
+X = vigra.readHDF5('../training_data/features_test.h5', 'data')
 shape = X.shape
 X = X.reshape((shape[0]*shape[1]*shape[2],shape[3]))
 
@@ -40,7 +40,7 @@ def test_ram_consumption():
             max_ram = monitor_ram(n_tr, n_th)
             print "Max-Ram:", max_ram
             mem_dict[(n_tr, n_th)] = max_ram
-    with open('./results/sklearn_ram.pkl', 'w') as f:
+    with open('../results/sklearn_ram.pkl', 'w') as f:
         pickle.dump(mem_dict,f)
 
 if __name__ == '__main__':

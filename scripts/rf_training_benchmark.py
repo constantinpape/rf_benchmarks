@@ -8,8 +8,8 @@ import cPickle as pickle
 sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
-X = vigra.readHDF5('./training_data/annas_features.h5', 'data')
-Y = vigra.readHDF5('./training_data/annas_labels.h5', 'data')
+X = vigra.readHDF5('../training_data/annas_features.h5', 'data')
+Y = vigra.readHDF5('../training_data/annas_labels.h5', 'data')
 
 rf2 = vigra.learning.RandomForest
 rf3 = vigra.learning.RandomForest3
@@ -98,9 +98,9 @@ def compare_train_rfs():
         res_dict["sk"][n_threads] = (t_sk, std_sk)
         print "Training sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
 
-    if not os.path.exists('./results'):
-        os.mkdir('./results')
-    with open('./results/benchmarks_training.pkl', 'w') as f:
+    if not os.path.exists('../results'):
+        os.mkdir('../results')
+    with open('../results/benchmarks_training.pkl', 'w') as f:
         pickle.dump(res_dict, f)
 
 if __name__ == '__main__':

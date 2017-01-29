@@ -8,10 +8,10 @@ from concurrent import futures
 sys.path.append('/home/consti/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
-X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
-Y_train = vigra.readHDF5('./training_data/annas_labels.h5', 'data')[:,None].astype('uint32')
+X_train = vigra.readHDF5('../training_data/annas_features.h5', 'data')
+Y_train = vigra.readHDF5('../training_data/annas_labels.h5', 'data')[:,None].astype('uint32')
 
-X = vigra.readHDF5('./training_data/features_test.h5', 'data')
+X = vigra.readHDF5('../training_data/features_test.h5', 'data')
 shape = X.shape
 X = X.reshape((shape[0]*shape[1]*shape[2],shape[3]))
 
@@ -63,10 +63,10 @@ def predict_rf(rfs, n_threads=2, save = False, save_name = "prediction.h5"):
         probs /= n_trees
 
         if save:
-            if not os.path.exists('./results'):
-                os.mkdir('./results')
+            if not os.path.exists('../results'):
+                os.mkdir('../results')
             vigra.writeHDF5(probs.reshape( (shape[0], shape[1], shape[2], 4) ),
-                    './results/' + save_name, 'data')
+                    '../results/' + save_name, 'data')
     return probs
 
 
@@ -83,7 +83,7 @@ def grid_search(N, n_threads, save=False):
     if save:
         assert N == 1
 
-    reference_pmap = vigra.readHDF5('./results/prediction.h5', 'data')
+    reference_pmap = vigra.readHDF5('../results/prediction.h5', 'data')
     reference_pmap = reference_pmap.reshape((shape[0]*shape[1]*shape[2],4))
 
     res_dict = {}
@@ -116,9 +116,9 @@ def grid_search(N, n_threads, save=False):
             res_dict[(max_depth, min_leaf_size)] = (t_train_m, t_train_std, t_test_m, t_test_std, acc_m,acc_std)
 
     if not save:
-        if not os.path.exists('./results'):
-            os.mkdir('./results')
-        with open('./results/benchmarks_gridsearch.pkl', 'w') as f:
+        if not os.path.exists('../results'):
+            os.mkdir('../results')
+        with open('../results/benchmarks_gridsearch.pkl', 'w') as f:
             pickle.dump(res_dict, f)
 
 
