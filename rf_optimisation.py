@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 import time
 from concurrent import futures
-sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
+sys.path.append('/home/consti/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
 X_train = vigra.readHDF5('./training_data/annas_features.h5', 'data')
@@ -124,6 +124,6 @@ def grid_search(N, n_threads, save=False):
 
 if __name__ == '__main__':
     # for eval and validation
-    #rfs = learn_rf(1, -1, 4)
-    #pmap = predict_rf(rfs, 4, True)
-    grid_search(15, 4)
+    rfs = learn_rf(-1,0, 4)
+    pmap = predict_rf(rfs, 4, True)
+    grid_search(1, 4, True)

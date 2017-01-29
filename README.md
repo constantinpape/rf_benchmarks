@@ -8,19 +8,12 @@ Using random forests:
 
 Training and prediction on cutout of FlyEM FIB25 data.
 
-TODOs:
-* Issue to sklearn about RAM consumption during training
-* For Pipeline: Try single block parallelisation -> appears to be faster!
-* Also compare to xgb
-* Use results from grid search in pipeline
-
 Note:
 * The Vigra RF2 is not internally parallelised, so I have used concurrent.futures to parallelize it from
 python, by training / predicting multiple forests with the corresponding number of sub-trees. (This is also what ilastik does).
-* The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
-RAM of my laptop (16 GB), even in single threaded prediction. See github issue: 
 * The benchmarks and gridsearch were done on a workstation (20 cores, 256 GB RAM), the pipeline results on a laptob (4 cores, 16 GB RAM).
-* For all experiments 17 features from filter responses per instance were used.
+* All experiments were done with 17 features from filter responses for each instance.
+* All experiments were done with 100 trees (ilastik default).
 
 ## Benchmark Training
 
@@ -58,9 +51,25 @@ Benchmarking the prediction for a 200^3 cutout.
 
 ![alt text][plotprediction]
 
+## Sklear RAM Issues
+
+* The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
+RAM of my laptop (16 GB), even in single threaded prediction. See github issue: 
+* Issue to sklearn about RAM consumption during training
+
 ## Gridsearch
 
 ## Pipeline Results
+
+* For Pipeline: Try single block parallelisation -> appears to be faster!
+* Use results from grid search in pipeline
+
+##TODO
+
+* Compare to more implementations / algourithms
+** XGB
+** GPU RandomForest
+
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
 [plotprediction]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_prediction.png  
