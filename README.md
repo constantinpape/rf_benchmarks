@@ -51,13 +51,43 @@ Benchmarking the prediction for a 200^3 cutout.
 
 ![alt text][plotprediction]
 
-## Sklear RAM Issues
+## Sklearn RAM Issues
 
-* The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
-RAM of my laptop (16 GB), even in single threaded prediction. See github issue: 
-* Issue to sklearn about RAM consumption during training
+The Sklearn RF needs insane amounts of RAM during prediction, for the feature matrix used here (~ 500 MB), it eats up all the 
+RAM of my laptop (16 GB). Hence I have profiled the maximal RAM consumption. Apparently it copies the input for every tree during prediction (see table).
+The number of threads does not affect the RAM usage.
+See github issue: TODO
+
+| Num Threads / | 1   | 2   | 4   | 8   | 10  | 20  | 
+| Num Trees     |     |     |     |     |     |     | 
+| ------------- | --: | --: | --: | --: | --: | --: | 
+| 5             | 1.94 GB | 1.94 GB | 1.94 GB | 2.19 GB | 2.19 GB | 2.19 GB |
+| 10            | 3.16 GB | 3.23 GB | 3.23 GB | 3.23 GB | 3.72 GB | 3.72 GB |
+| 25            | 6.83 GB | 6.84 GB | 6.84 GB | 6.93 GB | 7.08 GB | 6.97 GB |
+| 50            | 12.94 GB | 12.94 GB | 13.00 GB | 13.00 GB | 13.43 GB | 13.02 GB |
+| 100           | 25.15 GB | 25.16 GB | 25.28 GB | 25.28 GB | 25.48 GB | 25.82 GB |
+| 200           | 49.58 GB | 49.59 GB | 49.73 GB | 49.78 GB | 49.77 GB | 49.85 GB |
 
 ## Gridsearch
+
+| MinLeafSize / | 1   | 2   | 5   | 10  | 15  | 20  | 
+| MaxDepth      |     |     |     |     |     |     | 
+| ------------- | --: | --: | --: | --: | --: | --: | 
+| 8             | 15.839 +- 0.271 s | 15.640 +- 0.241 s | 15.687 +- 0.233 s | 15.644 +- 0.255 s | 15.689 +- 0.247 s | 15.608 +- 0.274 s |
+| 10            | 19.072 +- 0.295 s | 19.045 +- 0.274 s | 18.742 +- 0.223 s | 18.668 +- 0.231 s | 18.634 +- 0.237 s | 18.575 +- 0.261 s |
+| 12            | 20.845 +- 0.706 s | 20.660 +- 0.353 s | 20.535 +- 0.230 s | 20.332 +- 0.236 s | 19.957 +- 0.223 s | 20.034 +- 0.349 s |
+| 15            | 21.575 +- 0.300 s | 21.678 +- 0.366 s | 21.291 +- 0.258 s | 20.902 +- 0.641 s | 20.729 +- 0.381 s | 20.436 +- 0.261 s |
+| None          | **21.740 +- 0.455 s** | 21.588 +- 0.258 s | 21.415 +- 0.306 s | 20.953 +- 0.177 s | 20.818 +- 0.387 s | 20.442 +- 0.444 s |
+
+
+| MinLeafSize / | 1   | 2   | 5   | 10  | 15  | 20  | 
+| MaxDepth      |     |     |     |     |     |     | 
+| ------------- | --: | --: | --: | --: | --: | --: | 
+| 8             | 0.954 +- 0.002 | 0.954 +- 0.003 | 0.955 +- 0.003 | 0.954 +- 0.002 | 0.955 +- 0.002 | 0.954 +- 0.002 |
+| 10            | 0.965 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.965 +- 0.001 |
+| 12            | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
+| 15            | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.968 +- 0.001 | 0.967 +- 0.001 |
+| None          | **0.966 +- 0.002** | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
 
 ## Pipeline Results
 
