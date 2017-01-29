@@ -1,9 +1,10 @@
 import sys
-from sklearn import datasets
+import os
 from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 import time
 from concurrent import futures
+import cPickle as pickle
 sys.path.append('/home/consti/Work/projects_phd/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
@@ -72,20 +73,32 @@ def train_sk(n_threads=1):
     return np.mean(times), np.std(times)
 
 def compare_train_rfs():
+    res_dict = {}
     threads = (1,2,4,6,8)
     print "Start training benchmarks"
     # vi2
+    res_dict["vi2"] = {}
     for n_threads in threads:
         t_vi2, std_vi2 = train_vi2(n_threads)
+        res_dict["vi2"][n_threads] = (t_vi2, std_vi2)
         print "Training vigra rf2 with %i threads in %f +- %f s" % (n_threads, t_vi2, std_vi2)
     # vi3
+    res_dict["vi3"] = {}
     for n_threads in threads:
         t_vi3, std_vi3 = train_vi3(n_threads)
+        res_dict["vi3"][n_threads] = (t_vi3, std_vi3)
         print "Training vigra rf3 with %i threads in %f +- %f s" % (n_threads, t_vi3, std_vi3)
     # sk
+    res_dict["sk"] = {}
     for n_threads in threads:
         t_sk, std_sk = train_sk(n_threads)
+        res_dict["sk"][n_threads] = (t_sk, std_sk)
         print "Training sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
+
+    if not os.path.exists('./results'):
+        os.mkdir('./results')
+    with open('./results/benchmarks_training.pkl', 'w') as f:
+        pickle.dump(res_dict, f)
 
 if __name__ == '__main__':
     compare_train_rfs()

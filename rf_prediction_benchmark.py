@@ -1,5 +1,6 @@
 import sys
-from sklearn import datasets
+import os
+import cPickle as pickle
 from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 import time
@@ -88,21 +89,33 @@ def predict_sk(n_threads=1):
     return np.mean(times), np.std(times)
 
 def compare_predict_rfs():
+    res_dict = {}
     threads = (1,2,4,6,8)
     print "Start prediction benchmarks"
     # vi2
+    res_dict["vi2"] = {}
     for n_threads in threads:
         t_vi2, std_vi2 = predict_vi2(n_threads)
+        res_dict["vi2"][n_threads] = (t_vi2, std_vi2)
         print "Predicting vigra rf2 with %i threads in %f +- %f s" % (n_threads, t_vi2, std_vi2)
     # vi3
+    res_dict["vi3"] = {}
     for n_threads in threads:
         t_vi3, std_vi3 = predict_vi3(n_threads)
+        res_dict["vi3"][n_threads] = (t_vi3, std_vi3)
         print "Predicting vigra rf3 with %i threads in %f +- %f s" % (n_threads, t_vi3, std_vi3)
     # TODO FIXME This is insanely RAM-hungry, write sklearn issue!
     # sk
+    #res_dict["sk"] = {}
     #for n_threads in threads:
     #    t_sk, std_sk = predict_sk(n_threads)
+    #    res_dict["sk"][n_threads] = (t_sk, std_sk)
     #    print "Predicting sklearn rf with %i threads in %f +- %f s" % (n_threads, t_sk, std_sk)
+
+    if not os.path.exists('./results'):
+        os.mkdir('./results')
+    with open('./results/benchmarks_prediction.pkl', 'w') as f:
+        pickle.dump(res_dict, f)
 
 if __name__ == '__main__':
     compare_predict_rfs()
