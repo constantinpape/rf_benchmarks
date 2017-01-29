@@ -13,7 +13,7 @@ Note:
 python, by training / predicting multiple forests with the corresponding number of sub-trees. (This is also what ilastik does).
 * The benchmarks and gridsearch were done on a workstation (20 cores, 256 GB RAM), the pipeline results on a laptob (4 cores, 16 GB RAM).
 * All experiments were done with 17 features from filter responses for each instance.
-* All experiments were done with 100 trees (ilastik default).
+* All experiments were done with 100 trees (ilastik default). The random forests are trained until purity for the first benchmarks.
 
 ## Benchmark Training
 
@@ -71,24 +71,41 @@ See also github issue: TODO
 
 ## Gridsearch
 
+To see if reducing the tree complexity while keeping can speed up the prediction while keeping high enough accuracy, I have run a grid-search 
+over the maximal tree depth and the minimal number of instances per leaf.
+To check for high enough accuracy, I compare the prediction to a reference probability map from the random forest trained until purity. 
+Note that this corresponds to the **bold** entry, hence all accuracies around 0.966 are equivalent to the RF trained to purity.
+
 | MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
 | MaxDepth      |     |     |     |     |     |     | 
-| 8             | 15.839 +- 0.271 s | 15.640 +- 0.241 s | 15.687 +- 0.233 s | 15.644 +- 0.255 s | 15.689 +- 0.247 s | 15.608 +- 0.274 s |
+| 8             | *15.839 +- 0.271 s* | 15.640 +- 0.241 s | 15.687 +- 0.233 s | 15.644 +- 0.255 s | 15.689 +- 0.247 s | 15.608 +- 0.274 s |
 | 10            | 19.072 +- 0.295 s | 19.045 +- 0.274 s | 18.742 +- 0.223 s | 18.668 +- 0.231 s | 18.634 +- 0.237 s | 18.575 +- 0.261 s |
 | 12            | 20.845 +- 0.706 s | 20.660 +- 0.353 s | 20.535 +- 0.230 s | 20.332 +- 0.236 s | 19.957 +- 0.223 s | 20.034 +- 0.349 s |
 | 15            | 21.575 +- 0.300 s | 21.678 +- 0.366 s | 21.291 +- 0.258 s | 20.902 +- 0.641 s | 20.729 +- 0.381 s | 20.436 +- 0.261 s |
 | None          | **21.740 +- 0.455 s** | 21.588 +- 0.258 s | 21.415 +- 0.306 s | 20.953 +- 0.177 s | 20.818 +- 0.387 s | 20.442 +- 0.444 s |
 
+GridSearch: Prediction Time (4 Threads)
 
 | MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
 | MaxDepth      |     |     |     |     |     |     | 
-| 8             | 0.954 +- 0.002 | 0.954 +- 0.003 | 0.955 +- 0.003 | 0.954 +- 0.002 | 0.955 +- 0.002 | 0.954 +- 0.002 |
+| 8             | *0.954 +- 0.002* | 0.954 +- 0.003 | 0.955 +- 0.003 | 0.954 +- 0.002 | 0.955 +- 0.002 | 0.954 +- 0.002 |
 | 10            | 0.965 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.965 +- 0.001 |
 | 12            | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
 | 15            | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.968 +- 0.001 | 0.967 +- 0.001 |
 | None          | **0.966 +- 0.002** | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
+
+GridSearch: Accuracy
+
+As we can see the min leaf size does not affect training times or accuracies significantly.
+All trees with a max depth of 10 and are equivalent to the one trained to purity.
+They also don't offer a significant speedup.
+The forests trained only to depth 8 are not equivalent, but also faster in prediction.
+Optically, the differences between this reduced and the full model appear not to be significant.
+See images below, showing the results of **full** and *reduced* model.
+
+![alt text][rawortho1] ![alt text][fullortho1] ![alt text][reducedortho1]
 
 ## Pipeline Results
 
@@ -104,3 +121,7 @@ Compare to more implementations / algourithms
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
 [plotprediction]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_prediction.png  
+
+[rawortho1]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/grid_raw_ortho1.png
+[fullortho1]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/grid_full_ortho1.png
+[reducedortho1]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/grid_reduced_ortho1.png
