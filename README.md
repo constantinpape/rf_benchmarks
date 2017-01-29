@@ -85,7 +85,7 @@ Note that this corresponds to the **bold** entry, hence all accuracies around 0.
 | 15            | 21.575 +- 0.300 s | 21.678 +- 0.366 s | 21.291 +- 0.258 s | 20.902 +- 0.641 s | 20.729 +- 0.381 s | 20.436 +- 0.261 s |
 | None          | **21.740 +- 0.455 s** | 21.588 +- 0.258 s | 21.415 +- 0.306 s | 20.953 +- 0.177 s | 20.818 +- 0.387 s | 20.442 +- 0.444 s |
 
-GridSearch: Prediction Time (4 Threads)
+Grid search: prediction time (4 Threads)
 
 | MinLeafSize   | 1   | 2   | 5   | 10  | 15  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
@@ -96,7 +96,7 @@ GridSearch: Prediction Time (4 Threads)
 | 15            | 0.966 +- 0.001 | 0.965 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.968 +- 0.001 | 0.967 +- 0.001 |
 | None          | **0.966 +- 0.002** | 0.966 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 | 0.967 +- 0.001 |
 
-GridSearch: Accuracy
+Grid search: accuracy
 
 As we can see the min leaf size does not affect training times or accuracies significantly.
 All trees with a max depth of 10 and are equivalent to the one trained to purity.
@@ -106,6 +106,8 @@ Optically, the differences between this reduced and the full model appear not to
 See images below, showing the results of **full** and *reduced* model.
 
 ![alt text][rawortho1] ![alt text][fullortho1] ![alt text][reducedortho1]
+
+Images: raw data (left) and prediction for background class of **full** (middle) and *reduced* (right) model.
 
 ## Pipeline Results
 
