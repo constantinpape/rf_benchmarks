@@ -24,7 +24,7 @@ n_trees = 100
 
 # do a grid search over min_split_node and max_depth
 min_split_node_vals = [1,2,5,10]
-max_depth_vals     = [-1,4,6,8,12]
+max_depth_vals      = [-1,4,6,8,12]
 
 
 def learn_rf(min_nodes, max_depth, n_threads=2):
@@ -72,6 +72,7 @@ def predict_rf(rfs, n_threads=2, save = False):
 
 
 def eval_pmap(probs, reference_pmap):
+    assert probs.shape == reference_pmap.shape
     max_validation = np.argmax(probs, axis = 0)
     max_reference  = np.argmax(reference_pmap, axis = 0)
     agree = max_validation == max_reference
@@ -81,18 +82,24 @@ def eval_pmap(probs, reference_pmap):
 def grid_search():
 
     reference_pmap = vigra.readHDF5('./results/prediction.h5', 'data')
+    reference_pmap = reference_pmap.reshape((shape[0]*shape[1]*shape[2],4))
 
     res_dict = {}
     for min_node in min_split_node_vals:
         for max_depth in max_depth_vals:
+            print "Eval for: ", min_node, max_depth
             t_train = time.time()
             rfs = learn_rf(min_node, max_depth, 4)
             t_train = time.time() - t_train
             t_test = time.time()
-            probs  = predict_rfs(rfs, 4)
+            probs  = predict_rf(rfs, 4)
             t_test = time.time() - t_test
             acc = eval_pmap(probs, reference_pmap)
             res_dict[(min_node, max_depth)] = (t_train, t_test, acc)
+
+            print "Train Time:", t_train, "s"
+            print "Prediction Time", t_test, "s"
+            print "Accuracy", acc
 
     if not os.path.exists('./results'):
         os.mkdir('./results')
@@ -102,6 +109,6 @@ def grid_search():
 
 if __name__ == '__main__':
     # for eval and validation
-    rfs = learn_rf(1, -1, 4)
-    pmap = predict_rf(rfs, 4, True)
-    #grid_search()
+    #rfs = learn_rf(1, -1, 4)
+    #pmap = predict_rf(rfs, 4, True)
+    grid_search()
