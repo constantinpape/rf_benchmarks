@@ -2,7 +2,7 @@ import cPickle as pickle
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_train_res():
+def plot_train_res(plot = False, markdn = False):
     with open('../results/benchmarks_training.pkl') as f:
         train_res = pickle.load(f)
 
@@ -20,6 +20,7 @@ def plot_train_res():
     std_skl = []
 
     for n_thr in n_threads:
+        print n_thr
         t_vi2.append(res_vi2[n_thr][0])
         std_vi2.append(res_vi2[n_thr][1])
 
@@ -29,17 +30,26 @@ def plot_train_res():
         t_skl.append(res_skl[n_thr][0])
         std_skl.append(res_skl[n_thr][1])
 
-    plt.figure()
-    plt.title("RF-Training-Benchmark")
-    plt.errorbar(n_threads, t_vi2, yerr = std_vi2, label = "vigra-rf2")
-    plt.errorbar(n_threads, t_vi3, yerr = std_vi3, label = "vigra-rf3")
-    plt.errorbar(n_threads, t_skl, yerr = std_skl, label = "sklearn-rf")
-    plt.xlabel('number of threads')
-    plt.ylabel('training time [s]')
-    plt.legend()
-    plt.savefig('./plot_train.png')
-    plt.close()
+    if plot:
+        plt.figure()
+        plt.title("RF-Training-Benchmark")
+        plt.errorbar(n_threads, t_vi2, yerr = std_vi2, label = "vigra-rf2")
+        plt.errorbar(n_threads, t_vi3, yerr = std_vi3, label = "vigra-rf3")
+        plt.errorbar(n_threads, t_skl, yerr = std_skl, label = "sklearn-rf")
+        plt.xlabel('number of threads')
+        plt.ylabel('training time [s]')
+        plt.legend()
+        plt.savefig('./plot_train.png')
+        plt.close()
+
+    if markdn:
+        with open('./markdn_train.md', 'w') as f:
+            f.write("| Num Threads | Vigra RF2 | Vigra RF3 | Sklearn RF | \n")
+            f.write("| ----------- | --------: | --------: | ---------: | \n")
+            for i, n_thr in enumerate(n_threads):
+                f.write("| %i           | %.3f +- %.3f  | %.3f +- %.3f  | %.3f +- %.3f   | \n" % (n_thr,
+                    t_vi2[i], std_vi2[i], t_vi3[i], std_vi3[i], t_skl[i], std_skl[i]))
 
 
 if __name__ == '__main__':
-    plot_train_res()
+    plot_train_res(markdn = True)
