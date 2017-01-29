@@ -57,7 +57,7 @@ The Sklearn RF needs insane amounts of RAM during prediction. For the feature ma
 RAM of my laptop (16 GB). Hence I have profiled the maximal RAM consumption. Apparently it copies the input for every tree during prediction (see table).
 The number of threads does not affect the RAM usage.
 
-See also github issue: TODO
+See also github issue: https://github.com/scikit-learn/scikit-learn/issues/8244
 
 | Num Threads   | 1   | 2   | 4   | 8   | 10  | 20  | 
 | ------------- | --: | --: | --: | --: | --: | --: | 
