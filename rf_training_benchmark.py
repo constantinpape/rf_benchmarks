@@ -5,7 +5,7 @@ import numpy as np
 import time
 from concurrent import futures
 import cPickle as pickle
-sys.path.append('/home/consti/Work/projects_phd/ilastik-hackathon/inst/lib/python2.7/dist-packages')
+sys.path.append('/home/constantin/Work/my_projects/ilastik-hackathon/inst/lib/python2.7/dist-packages')
 import vigra
 
 X = vigra.readHDF5('./training_data/annas_features.h5', 'data')
@@ -15,10 +15,10 @@ rf2 = vigra.learning.RandomForest
 rf3 = vigra.learning.RandomForest3
 
 # number of repetitions
-N = 25
+N = 20
 # parameter, for the rest the defaults should agree
 n_trees = 100
-min_split_node = 1
+min_split_node = 2
 
 # we always construct the rf in the loop because rf3 does not have an empty constructor
 
@@ -33,7 +33,9 @@ def train_vi2(n_threads=1):
             times.append(time.time() - t0)
     else:
         sub_trees  = n_threads * [n_trees / n_threads]
-        sub_trees[0] += n_trees % n_threads
+        remaining_trees = n_trees % n_threads
+        for extra_tree in xrange(remaining_trees):
+            sub_trees[extra_tree] += 1
         def train_sub_rf(Xtr, Ytr, n_subs):
             rf = rf2(treeCount = n_subs, min_split_node_size = min_split_node)
             rf.learnRF(Xtr, Ytr)
@@ -74,7 +76,8 @@ def train_sk(n_threads=1):
 
 def compare_train_rfs():
     res_dict = {}
-    threads = (1,2,4,6,8)
+    #threads = (1,2,4,6,8)
+    threads = (1,2,4,6,8,10,20,30,40)
     print "Start training benchmarks"
     # vi2
     res_dict["vi2"] = {}

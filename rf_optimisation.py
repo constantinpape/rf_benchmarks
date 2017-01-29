@@ -35,7 +35,9 @@ def learn_rf(min_nodes, max_depth, n_threads=2):
         return rf
 
     subtrees  = n_threads * [n_trees / n_threads]
-    subtrees[0] += n_trees % n_threads
+    remaining_trees = n_trees % n_threads
+    for extra_tree in xrange(remaining_trees):
+        sub_trees[extra_tree] += 1
 
     with futures.ThreadPoolExecutor(max_workers = n_threads) as executor:
         tasks = []

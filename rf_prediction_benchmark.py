@@ -22,7 +22,7 @@ rf3 = vigra.learning.RandomForest3
 N = 1
 # parameter, for the rest the defaults should agree
 n_trees = 100
-min_split_node = 1
+min_split_node = 2
 
 def predict_vi2(n_threads=1):
     times = []
@@ -36,7 +36,9 @@ def predict_vi2(n_threads=1):
     else:
 
         sub_trees  = n_threads * [n_trees / n_threads]
-        sub_trees[0] += n_trees % n_threads
+        remaining_trees = n_trees % n_threads
+        for extra_tree in xrange(remaining_trees):
+            sub_trees[extra_tree] += 1
 
         def train_sub_rf(Xtr, Ytr, n_subs):
             rf = rf2(treeCount = n_subs, min_split_node_size = min_split_node)
