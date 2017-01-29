@@ -123,7 +123,7 @@ def grid_search(N, n_threads, save=False):
 
 
 if __name__ == '__main__':
-    # for eval and validation
-    rfs = learn_rf(-1,0, 4)
-    pmap = predict_rf(rfs, 4, True)
-    grid_search(1, 4, True)
+    #rfs = learn_rf(-1, 0, 4)
+    #pmap = predict_rf(rfs, 4, True)
+
+    grid_search(15, 4)

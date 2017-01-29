@@ -33,12 +33,12 @@ def monitor_ram(n_tr, n_th):
 
 def test_ram_consumption():
     mem_dict = {}
-    tree_tests = (5,10,25,50,100)
+    tree_tests = (5,10,25,50,100,200)
     thread_tests = (1,2,4,8,10,20)
     for n_tr in tree_tests:
         for n_th in thread_tests:
             max_ram = monitor_ram(n_tr, n_th)
-            print "Max-Ram:" max_ram
+            print "Max-Ram:", max_ram
             mem_dict[(n_tr, n_th)] = max_ram
     with open('./results/sklearn_ram.pkl', 'w') as f:
         pickle.dump(mem_dict,f)
