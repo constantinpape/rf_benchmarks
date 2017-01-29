@@ -38,7 +38,7 @@ def plot_train_res(train = True, plot = False, markdn = False):
         plt.errorbar(n_threads, t_vi3, yerr = std_vi3, label = "vigra-rf3")
         plt.errorbar(n_threads, t_skl, yerr = std_skl, label = "sklearn-rf")
         plt.xlabel('number of threads')
-        plt.ylabel('training time [s]')
+        plt.ylabel('training time [s]' if train else 'prediction time [s]')
         plt.legend()
         save_path = './plot_train.png' if train else './plot_prediction.png'
         plt.savefig(save_path)

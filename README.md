@@ -63,3 +63,4 @@ Benchmarking the prediction for a 200^3 cutout.
 ## Pipeline Results
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
+[plotprediction]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_prediction.png  
