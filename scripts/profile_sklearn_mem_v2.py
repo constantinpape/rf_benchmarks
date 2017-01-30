@@ -11,8 +11,7 @@ print sklearn.__version__ # check the version directly
 X_train = []
 Y_train = []
 X = []
-n_trees   = -1
-n_threads = -1
+rf = None
 
 def load_ilastik_data(path_to_il_train_features,
         path_to_il_train_labels,
@@ -64,22 +63,19 @@ def load_digits_data():
     print "Unique labels:", np.unique(Y_train)
 
 
-def run_sklearn():
-    assert n_trees != -1, n_trees    # check that globally setting the params has worked
-    assert n_threads != -1, n_threads
-    #print "N-trees:", n_trees, "N-threads:", n_threads
+def train_sklearn(n_trees, n_threads):
+    global rf # global workaround...
     rf = rf_sk(n_estimators = n_trees, n_jobs = n_threads)
     rf.fit(X_train, Y_train)
-    #print rf.classes_
+
+
+def predict_sklearn():
     rf.predict_proba(X)
 
 
-def monitor_ram(n_tr, n_th):
-    global n_trees
-    n_trees = n_tr
-    global n_threads
-    n_threads = n_th
-    mem_usage = memory_usage(run_sklearn)
+def monitor_ram(n_trees, n_threads):
+    train_sklearn(n_trees, n_threads)
+    mem_usage = memory_usage(predict_sklearn)
     max_ram = max(mem_usage)
     return max_ram
 
@@ -88,16 +84,16 @@ def test_ram_consumption():
     mem_dict = {}
     tree_tests = (1,2,4,5,10,25)
     #thread_tests = (1,2,4,8,10,20)
-    n_th = 1
-    for n_tr in tree_tests:
-        max_ram = monitor_ram(n_tr, n_th)
-        print "n_estimators: %i: max-Ram usage: %.2f MB" % (n_tr, max_ram)
+    n_threads = 1
+    for n_trees in tree_tests:
+        max_ram = monitor_ram(n_trees, n_threads)
+        print "n_estimators: %i: max-Ram usage: %.2f MB" % (n_trees, max_ram)
 
 
 if __name__ == '__main__':
-    #load_ilastik_data('../training_data/features_train.h5',
-    #        '../training_data/labels_train.h5',
-    #        '../training_data/features_test.h5')
-    load_digits_data()
+    load_ilastik_data('../training_data/features_train.h5',
+            '../training_data/labels_train.h5',
+            '../training_data/features_test.h5')
+    #load_digits_data()
 
     test_ram_consumption()
