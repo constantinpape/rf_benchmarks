@@ -1,8 +1,11 @@
+import sklearn
 from sklearn.ensemble import RandomForestClassifier as rf_sk
 import numpy as np
 from memory_profiler import memory_usage
 import vigra
 import cPickle as pickle
+
+print sklearn.__version__ # check the version directly
 
 X_train = vigra.readHDF5('../training_data/annas_features.h5', 'data')
 Y_train = vigra.readHDF5('../training_data/annas_labels.h5', 'data')
