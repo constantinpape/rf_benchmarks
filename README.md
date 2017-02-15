@@ -122,12 +122,13 @@ Runtimes for (300,300,200) cutout.
 WIP
 
 
-## TODO
+## Benchmarks for edge training and prediction
 
-Compare to more implementations / algourithms
-* XGB
-* GPU RandomForest
-
+|         | Training  | Prediction |
+| ------- | -------:  | ---------: |
+| sklearn |           |            |
+| xgb     |           |            |
+| vi-rf3  | 25.8 min  | 53.5 s     |
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
 [plotprediction]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_prediction.png  
