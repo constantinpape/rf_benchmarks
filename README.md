@@ -126,9 +126,10 @@ WIP
 
 |         | Training  | Prediction |
 | ------- | -------:  | ---------: |
-| sklearn |           |            |
-| xgb     |           |            |
+| sklearn | 11.45 min | 2.15 min   |
+| xgb     | 54.2 min  | 48.8 sec   |
 | vi-rf3  | 25.8 min  | 53.5 s     |
+
 
 [plottrain]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_train.png  
 [plotprediction]: https://github.com/constantinpape/rf_benchmarks/blob/master/evaluation/plot_prediction.png  
